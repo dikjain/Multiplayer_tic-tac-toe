@@ -1,0 +1,28 @@
+.main{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.box{
+  &:hover{
+    cursor: pointer;
+  }
+}
+.opop{
+  &:hover{
+    cursor: not-allowed;
+  }
+}
+.uu{
+  font-family: cursive !important
+}
+.box{
+  cursor: pointer;
+  background: gray;
+}
+.circwin{
+  background: rgb(20, 230, 212);
+  
+}
+.crswon{
+  background-color: rgb(221, 103, 215);
+}
