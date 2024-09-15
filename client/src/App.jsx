@@ -42,7 +42,7 @@ function App() {
       }
       const name = result.value
       setusername(name);
-       newsocket = io("http://localhost:3000",{
+       newsocket = io("https://multiplayer-tic-tac-toe-yhoq.onrender.com/",{
        autoConnect: true,
      });
      newsocket.emit("reqtoplay",{
