@@ -7,8 +7,8 @@ import "./App.css"
 function Box({playingas,setplayingas,id,socket,setgamestate,gamestate,checkwin,finishedarraystate,isfinished,setisfinished,currentplayer,setcurrentplayer}) {
     const circleSvg = (
 <svg
-  width="96"
-  height="96"
+  width="192"
+  height="192"
   viewBox="0 0 24 24"
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
@@ -25,8 +25,8 @@ function Box({playingas,setplayingas,id,socket,setgamestate,gamestate,checkwin,f
       );  
       const crossSvg = (
         <svg
-        width="96"
-        height="96"
+        width="192"
+        height="192"
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
