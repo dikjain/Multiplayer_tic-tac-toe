@@ -10,8 +10,7 @@ const io = new Server(httpServer, {
     cors: {
         origin: "*", // Allow all origins
         methods: ["GET", "POST"],
-    },
-    transports: ['websocket'] 
+    }
 });
 
 let allUsers = []; // Track all users
@@ -121,7 +120,7 @@ app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
 });
 
-const PORT = 3000;
+const PORT = 3001;
 httpServer.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
