@@ -30,30 +30,22 @@ io.on("connection", (socket) => {
         });
 
         let opponentFound = false;
-
-        // Find an opponent for the current player
         for (const user of allUsers) {
             if (user.online && !user.playing && user.id !== socket.id) {
                 const opponent = user;
                 const currentPlayer = allUsers.find((u) => u.id === socket.id);
 
                 if (currentPlayer) {
-                    // Mark both players as playing
                     opponent.playing = true;
                     currentPlayer.playing = true;
-
-                    // Create a unique room for both players
                     const roomId = `${currentPlayer.id}-${opponent.id}`;
                     
-                    // Add both players to the room
                     socket.join(roomId);
                     opponent.socket.join(roomId);
 
                     // Notify both players about the match
                     io.to(opponent.id).emit("opponentfound", { opponent: currentPlayer.username, playingas: 'circle' });
                     io.to(currentPlayer.id).emit("opponentfound", { opponent: opponent.username, playingas: "cross" });
-
-                    // Assign the room to both players for future moves
                     currentPlayer.roomId = roomId;
                     opponent.roomId = roomId;
 
@@ -63,7 +55,7 @@ io.on("connection", (socket) => {
             }
         }
 
-        // If no opponent was found, notify the current player
+
         if (!opponentFound) {
             socket.emit("opponentNotfound");
         }

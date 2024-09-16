@@ -41,7 +41,9 @@
   .crswon{
     background-color: rgb(221, 103, 215);
   }
-  
+  .drawhai{
+    background: rgba(255, 255, 0, 0.856) !important;
+  }
   
   @media (max-width: 1300px) {
     #boxcont{
