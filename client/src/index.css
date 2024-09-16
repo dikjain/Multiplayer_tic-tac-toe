@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Sofadi+One&display=swap');
 
 
 *{
@@ -22,7 +23,7 @@
     }
   }
   .uu{
-    font-family: cursive !important
+    font-family: "Sofadi One", system-ui;
   }
   .box{
     cursor: pointer;

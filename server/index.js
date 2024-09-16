@@ -98,19 +98,23 @@ io.on("connection", (socket) => {
         const offlineUser = allUsers.find(user => user.id === socket.id);
         if (offlineUser) {
             offlineUser.online = false;
-            // Remove from room and mark as not playing
-            const roomId = offlineUser.roomId;
-            if (roomId) {
-                io.to(roomId).emit("opponentleft");
+            if (offlineUser.roomId) {
+                io.to(offlineUser.roomId).emit("opponentleft");
+                // Remove both players from the room
+                allUsers.forEach(user => {
+                    if (user.roomId === offlineUser.roomId) {
+                        user.playing = false;
+                        user.roomId = null;
+                    }
+                });
             }
         }
-        // Remove disconnected user from the allUsers list
-        allUsers = allUsers.filter(user => user.id !== socket.id);
+        allUsers = allUsers.filter(user => user.id !== socket.id); // Clean up user
     });
+    
 });
 
 const __dirname = path.resolve();
-
 app.use(express.static(path.join(__dirname, 'dist')));
 app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));

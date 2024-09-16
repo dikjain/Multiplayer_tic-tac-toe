@@ -49,7 +49,7 @@ function Box({playingas,setplayingas,id,socket,setgamestate,gamestate,checkwin,f
       const [icon,seticon] = useState(null)
 
       const clickonsquare = ()=>{
-        console.log(gamestate.flat()[id])
+        console.log(gamestate)
         if(isfinished){
             return
         }
