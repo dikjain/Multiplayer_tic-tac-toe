@@ -32,9 +32,6 @@ function App() {
       });
       return result
     }
-    
-    
-    
      const letsplay = async()=>{
       const result =  await takeplayername();
       if(!result.isConfirmed) {
@@ -143,9 +140,7 @@ function App() {
     };
     
 
-useEffect(()=>{
-      socket?.emit("movefromplayer",gamestate)
-},[currentplayer,socket])
+
   
 
 if(!playonline){

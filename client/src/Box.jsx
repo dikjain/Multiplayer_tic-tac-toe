@@ -47,9 +47,9 @@ function Box({playingas,setplayingas,id,socket,setgamestate,gamestate,checkwin,f
 
 
       const [icon,seticon] = useState(null)
+      
 
       const clickonsquare = ()=>{
-        console.log(gamestate)
         if(isfinished){
             return
         }
@@ -63,13 +63,12 @@ function Box({playingas,setplayingas,id,socket,setgamestate,gamestate,checkwin,f
             }
           }
           socket.emit("currentplayer", currentplayer)
-           setgamestate((prev)=>{
-            const newsstate = [...prev]
-            let rowindex = Math.floor(id/3);
-            let colindex = id%3;
+            const newsstate = [...gamestate];
+            let rowindex = Math.floor(id / 3);
+            let colindex = id % 3;
             newsstate[rowindex][colindex] = currentplayer;
-            return newsstate
-        })
+            setgamestate(newsstate); 
+        socket?.emit("movefromplayer",gamestate)
 
         
       }
@@ -83,10 +82,6 @@ function Box({playingas,setplayingas,id,socket,setgamestate,gamestate,checkwin,f
         if (winner){   
             setisfinished(winner)            
         }
-
-
-        
-
         if(gamestate.flat()[id] == "circle"){
           seticon(circleSvg)
         }
