@@ -8,7 +8,7 @@ const httpServer = createServer(app); // Create an HTTP server from the Express 
 
 const io = new Server(httpServer, {
     cors: {
-        origin: "https://multiplayer-tic-tac-toe-yhoq.onrender.com/", // Allow all origins
+        origin: "*", // Allow all origins
         methods: ["GET", "POST"],
     },
     transports: ['websocket'] 
