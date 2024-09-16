@@ -1,7 +1,4 @@
-.main{
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-}
+
 .box{
   &:hover{
     cursor: pointer;
@@ -25,4 +22,17 @@
 }
 .crswon{
   background-color: rgb(221, 103, 215);
+}
+
+
+@media (max-width: 400px) {
+
+  #boxcont{
+    width: 330px;
+  }
+  .changewh{
+    width: 100px;
+    height: 100px;
+  }
+  
 }

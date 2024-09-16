@@ -10,3 +10,120 @@
 
 }
 
+
+  .box{
+    &:hover{
+      cursor: pointer;
+    }
+  }
+  .opop{
+    &:hover{
+      cursor: not-allowed;
+    }
+  }
+  .uu{
+    font-family: cursive !important
+  }
+  .box{
+    cursor: pointer;
+    background: gray;
+  }
+  .circwin{
+    background: rgb(20, 230, 212);
+  }
+  .circtext{
+    color: rgb(20, 230, 212);
+  }
+  .crstext{
+    color: rgb(221, 103, 215);
+  }
+  .crswon{
+    background-color: rgb(221, 103, 215);
+  }
+  
+  
+  @media (max-width: 1300px) {
+    #boxcont{
+    transform: translateY(10%);
+    }
+    .tichead{
+        font-size: 50px;
+    }
+    .name{
+        font-size: 30px;
+        transform: translateY(-90%);
+    }
+    .lo{
+        font-size: 50px;
+        bottom: 10%;
+    }
+  }
+  @media (max-width: 600px) {
+  
+    #boxcont{
+        
+    transform: translateY(10%);
+      width: 480px;
+      height: 480px;
+    }
+    .changewh{
+      width: 150px;
+      height: 150px;
+    }
+    .tichead{
+        font-size: 8vw;
+    }
+    .name{
+        font-size: 4vw;
+        transform: translateY(-90%);
+    }
+    .lo{
+        font-size: 7vw;
+        bottom: 10%;
+    }
+  }
+  @media (max-width: 500px) {
+  
+    #boxcont{
+        transform: translateY(10%);
+      width: 400px;
+      height: 400px;
+    }
+    .changewh{
+      width: 120px;
+      height: 120px;
+    }
+    .tichead{
+        font-size: 10vw;
+    }
+    .name{
+        font-size: 5vw;
+        transform: translateY(-80%);
+    }
+    .lo{
+        font-size: 9vw;
+        bottom: 15%;
+    }
+  }
+  @media (max-width: 400px) {
+  
+    #boxcont{
+      width: 330px;
+      height: 330px;
+    }
+    .changewh{
+      width: 100px;
+      height: 100px;
+    }
+    .tichead{
+        font-size: 10vw;
+    }
+    .name{
+        font-size: 5vw;
+        transform: translateY(-50%);
+    }
+    .lo{
+        font-size: 9vw;
+        bottom: 20%;
+    }
+  }

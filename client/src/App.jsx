@@ -42,7 +42,7 @@ function App() {
       }
       const name = result.value
       setusername(name);
-       newsocket = io("https://multiplayer-tic-tac-toe-yhoq.onrender.com/",{
+       newsocket = io("http://localhost:3000/",{
        autoConnect: true,
      });
      newsocket.emit("reqtoplay",{
@@ -52,6 +52,26 @@ function App() {
     }
 
     useEffect(()=>{
+
+      socket?.on("opponentleft", () => {
+        swal.fire({
+            title: "Opponent Left",
+            text: "Your opponent has left the game. The game will reset.",
+            icon: "info",
+            confirmButtonText: "Ok"
+        }).then(() => {
+            // Reset the game state after opponent leaves
+            setgamestate([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+            setcurrentplayer("circle");
+            setisfinished(false);
+            setfinishedarraystate([]);
+            setopponent(null); // Wait for a new opponent
+            setplayingas(null);
+            socket?.emit("inqueue")
+        });
+    });
+
+
       if(socket){
       socket.on("connect",()=>{
         setplayonline(true); 
@@ -137,9 +157,9 @@ if(playonline && !opponent){
 
   return (
     <div className='main  w-screen relative flex items-center justify-center text-white h-screen bg-[#020202]'>
-      <h2 className='uu absolute top-[5%] text-[5vw] px-5 p-3 rounded-xl  bg-gray-500'>Tic-Tac-Toe</h2>
-      <h2 className={`uu absolute top-[25%] left-[20%] ${isfinished?"bg-gray-500": currentplayer == playingas ?"circwin":"bg-gray-500"}  text-[2vw] px-5 p-3 rounded-xl  `}>{username}</h2>
-      <h2 className={`uu absolute top-[25%] right-[20%] text-[2vw] ${isfinished?"bg-gray-500": currentplayer == playingas ?"bg-gray-500":"crswon"} px-5 p-3 rounded-xl `}>{opponent}</h2>
+      <h2 className='uu absolute tichead top-[5%] text-[5vw] px-5 p-3 rounded-xl  bg-gray-500'>Tic-Tac-Toe</h2>
+      <h2 className={`uu absolute name top-[25%] left-[20%] ${isfinished?"bg-gray-500": currentplayer == playingas ?"circwin":"bg-gray-500"}  text-[2vw] px-5 p-3 rounded-xl  `}>{username}</h2>
+      <h2 className={`uu absolute name top-[25%] right-[20%] text-[2vw] ${isfinished?"bg-gray-500": currentplayer == playingas ?"bg-gray-500":"crswon"} px-5 p-3 rounded-xl `}>{opponent}</h2>
       <div id="boxcont" className='w-[500px] translate-y-[5%]  grid grid-cols-3 h-[500px] relative'>
       {gamestate.map((rowbox,row)=> rowbox.map((q,i)=>(<Box 
       socket={socket}
@@ -157,8 +177,8 @@ if(playonline && !opponent){
         setcurrentplayer={setcurrentplayer}
          />)))}
       </div>
-      {isfinished && isfinished !=="draw" && (<h2 className="uu absolute text-[5vw] bottom-[5%]">{isfinished} Won The Game</h2>)}
-      {isfinished =="draw" && (<h2 className="uu absolute text-[5vw] bottom-[5%]">It's a Draw</h2>)}
+      {isfinished && isfinished !=="draw" && (<h2 className="uu lo absolute text-[5vw] bottom-[5%]"><span className={`${isfinished == "circle" ? "circtext":(isfinished == "cross" ? "crstext" : "")}`}>{isfinished.toUpperCase()}</span> Won The Game</h2>)}
+      {isfinished =="draw" && (<h2 className="uu lo absolute text-[5vw] bottom-[5%]">It's a Draw</h2>)}
   </div>
 )}
 

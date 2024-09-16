@@ -99,7 +99,7 @@ function Box({playingas,setplayingas,id,socket,setgamestate,gamestate,checkwin,f
     },[gamestate])
 
   return (
-    <div onClick={clickonsquare} className={` ${finishedarraystate.includes(id) ? (isfinished == "circle"?"circwin":"crswon") :"box"}  ${isfinished =="draw" ? "bg-yellow-300":""}  rounded-xl ${isfinished ? "opop" : "box"} h-[150px] w-[150px] flex items-center justify-center`}>{icon}</div>
+    <div onClick={clickonsquare} className={` ${finishedarraystate.includes(id) ? (isfinished == "circle"?"circwin":"crswon") :"box"}  ${isfinished =="draw" ? "bg-yellow-300":""}  rounded-xl ${isfinished ? "opop" : "box"} changewh h-[150px] w-[150px] flex items-center justify-center`}>{icon}</div>
   )
 }
 

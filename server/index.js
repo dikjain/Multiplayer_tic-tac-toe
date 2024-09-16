@@ -1,4 +1,3 @@
-
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -14,18 +13,16 @@ const io = new Server(httpServer, {
     }
 });
 
-// Basic route for testing the Express server
-
-const alluser = [] // Store users
+let allUsers = []; // Track all users
 
 // Set up Socket.IO connection
 io.on("connection", (socket) => {
-    const currentuser = { socket: socket };
+    const currentUser = { id: socket.id, socket: socket };
 
     socket.on("reqtoplay", (username) => {
-        // Add new user to the alluser array
-        alluser.push({
-            ...currentuser,
+        // Add new user to the allUsers array
+        allUsers.push({
+            ...currentUser,
             id: socket.id,
             online: true,
             username: username.username,
@@ -35,19 +32,30 @@ io.on("connection", (socket) => {
         let opponentFound = false;
 
         // Find an opponent for the current player
-        for (const user of alluser) {
+        for (const user of allUsers) {
             if (user.online && !user.playing && user.id !== socket.id) {
                 const opponent = user;
-                const currentplayer = alluser.find((u) => u.id === socket.id);
+                const currentPlayer = allUsers.find((u) => u.id === socket.id);
 
-                if (currentplayer) {
+                if (currentPlayer) {
                     // Mark both players as playing
                     opponent.playing = true;
-                    currentplayer.playing = true;
+                    currentPlayer.playing = true;
 
-                    // Notify both players that an opponent is found
-                    io.to(opponent.id).emit("opponentfound", { opponent: currentplayer.username,playingas : 'circle' });
-                    io.to(currentplayer.id).emit("opponentfound", { opponent: opponent.username,playingas:"cross" });
+                    // Create a unique room for both players
+                    const roomId = `${currentPlayer.id}-${opponent.id}`;
+                    
+                    // Add both players to the room
+                    socket.join(roomId);
+                    opponent.socket.join(roomId);
+
+                    // Notify both players about the match
+                    io.to(opponent.id).emit("opponentfound", { opponent: currentPlayer.username, playingas: 'circle' });
+                    io.to(currentPlayer.id).emit("opponentfound", { opponent: opponent.username, playingas: "cross" });
+
+                    // Assign the room to both players for future moves
+                    currentPlayer.roomId = roomId;
+                    opponent.roomId = roomId;
 
                     opponentFound = true;
                     break;
@@ -61,33 +69,54 @@ io.on("connection", (socket) => {
         }
     });
 
-    socket.on("movefromplayer",(data)=>{
-        io.emit("movefromopponent",data)
-    })
-
-    socket.on("currentplayer",(data)=>{
-        io.emit("changecurrentplayer",data)
+    socket.on("movefromplayer", (data) => {
+        const currentPlayer = allUsers.find((user) => user.id === socket.id);
+        if (currentPlayer && currentPlayer.roomId) {
+            // Emit the move only to the players in the current player's room
+            io.to(currentPlayer.roomId).emit("movefromopponent", data);
+        }
+    });
+    socket.on("inqueue", () => {
+        const currentPlayer = allUsers.find((user) => user.id === socket.id);
+        currentPlayer.playing = false;
+        socket.emit("reqtoplay",{
+            username: currentPlayer.username,
+          })
         
-    })
+    });
+
+    socket.on("currentplayer", (data) => {
+        const currentPlayer = allUsers.find((user) => user.id === socket.id);
+        if (currentPlayer && currentPlayer.roomId) {
+            // Notify the current player in their room
+            io.to(currentPlayer.roomId).emit("changecurrentplayer", data);
+        }
+    });
 
     // Handle user disconnection
     socket.on("disconnect", () => {
-        const offlineuser = alluser.find(user => user.id === socket.id);
-        if (offlineuser) {
-            offlineuser.online = false;
+        const offlineUser = allUsers.find(user => user.id === socket.id);
+        if (offlineUser) {
+            offlineUser.online = false;
+            // Remove from room and mark as not playing
+            const roomId = offlineUser.roomId;
+            if (roomId) {
+                io.to(roomId).emit("opponentleft");
+            }
         }
+        // Remove disconnected user from the allUsers list
+        allUsers = allUsers.filter(user => user.id !== socket.id);
     });
 });
 
-const __dirname = path.resolve()
+const __dirname = path.resolve();
 
-
-
-
-app.use(express.static(path.join(__dirname, 'dist')))
-app.get('*',(req,res)=>{
-    res.sendFile(path.resolve(__dirname,'dist','index.html'));
+app.use(express.static(path.join(__dirname, 'dist')));
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
 });
+
 const PORT = 3000;
 httpServer.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
