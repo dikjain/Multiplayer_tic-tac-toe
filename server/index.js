@@ -15,6 +15,7 @@ const io = new Server(httpServer, {
 
 let allUsers = []; // Track all users
 
+let currentPlayer;
 // Set up Socket.IO connection
 io.on("connection", (socket) => {
     const currentUser = { id: socket.id, socket: socket };
@@ -33,7 +34,7 @@ io.on("connection", (socket) => {
         for (const user of allUsers) {
             if (user.online && !user.playing && user.id !== socket.id) {
                 const opponent = user;
-                const currentPlayer = allUsers.find((u) => u.id === socket.id);
+                currentPlayer = allUsers.find((u) => u.id === socket.id);
 
                 if (currentPlayer) {
                     opponent.playing = true;
@@ -62,14 +63,12 @@ io.on("connection", (socket) => {
     });
 
     socket.on("movefromplayer", (data) => {
-        const currentPlayer = allUsers.find((user) => user.id === socket.id);
         if (currentPlayer && currentPlayer.roomId) {
             // Emit the move only to the players in the current player's room
             io.to(currentPlayer.roomId).emit("movefromopponent", data);
         }
     });
     socket.on("inqueue", () => {
-        const currentPlayer = allUsers.find((user) => user.id === socket.id);
         currentPlayer.playing = false;
         socket.emit("reqtoplay",{
             username: currentPlayer.username,
@@ -78,12 +77,16 @@ io.on("connection", (socket) => {
     });
 
     socket.on("currentplayer", (data) => {
-        const currentPlayer = allUsers.find((user) => user.id === socket.id);
         if (currentPlayer && currentPlayer.roomId) {
             // Notify the current player in their room
             io.to(currentPlayer.roomId).emit("changecurrentplayer", data);
         }
     });
+    socket?.on("handlerestart",()=>{
+        const currentPlayer = allUsers.find((user) => user.id === socket.id);
+        io.to(currentPlayer.roomId).emit("restarting");
+
+    })
 
     // Handle user disconnection
     socket.on("disconnect", () => {

@@ -27,6 +27,8 @@ function App() {
         inputValidator: (value) => {
           if (!value) {
             return "You need to write something!";
+          } else if (value.length >8){
+            return "Username should not exceed 8 characters!";
           }
         }
       });
@@ -97,9 +99,21 @@ function App() {
         setcurrentplayer("circle")
       }
     })
+
+    socket?.on("restarting",()=>{
+      setgamestate([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+      setcurrentplayer("circle");
+      setisfinished(false);
+      setfinishedarraystate([]);
+    })
     
     },[currentplayer,socket])
 
+    const handlerestart = () => {
+      socket?.emit("handlerestart")
+    }
+
+    
 
 
 
@@ -152,9 +166,9 @@ if(playonline && !opponent){
 
   return (
     <div className='main  w-screen relative flex items-center justify-center text-white h-screen bg-[#020202]'>
-      <h2 className='uu absolute tichead top-[5%] text-[5vw] px-5 p-3 rounded-xl  bg-gray-500'>Tic-Tac-Toe</h2>
-      <h2 className={`uu absolute name top-[25%] left-[20%] ${isfinished?"bg-gray-500": currentplayer == playingas ?"circwin":"bg-gray-500"}  text-[2vw] px-5 p-3 rounded-xl  `}>{username}</h2>
-      <h2 className={`uu absolute name top-[25%] right-[20%] text-[2vw] ${isfinished?"bg-gray-500": currentplayer == playingas ?"bg-gray-500":"crswon"} px-5 p-3 rounded-xl `}>{opponent}</h2>
+      <h2 className={`${isfinished == "circle" ? "circwin":(isfinished == "cross" ? "crswon" : "") }   uu absolute tichead top-[5%] text-[5vw] px-5 p-3 rounded-xl  bg-gray-500`}>Tic-Tac-Toe</h2>
+      <h2 className={`uu absolute name top-[25%] left-[20%] ${isfinished?"bg-gray-500": currentplayer == playingas ?"circwin":"bg-gray-500"}  text-[1.5vw] px-5 p-3 rounded-xl  `}>{username}</h2>
+      <h2 className={`uu absolute name top-[25%] right-[20%] text-[1.5vw] ${isfinished?"bg-gray-500": currentplayer == playingas ?"bg-gray-500":"crswon"} px-5 p-3 rounded-xl `}>{opponent}</h2>
       <div id="boxcont" className='w-[500px] translate-y-[5%]  grid grid-cols-3 h-[500px] relative'>
       {gamestate.map((rowbox,row)=> rowbox.map((q,i)=>(<Box 
       socket={socket}
@@ -172,8 +186,9 @@ if(playonline && !opponent){
         setcurrentplayer={setcurrentplayer}
          />)))}
       </div>
-      {isfinished && isfinished !=="draw" && (<h2 className="uu lo absolute text-[5vw] bottom-[5%]"><span className={`${isfinished == "circle" ? "circtext":(isfinished == "cross" ? "crstext" : "")}`}>{isfinished.toUpperCase()}</span> Won The Game</h2>)}
+      {isfinished && isfinished !=="draw" && (<h2 className="uu lo absolute text-[5vw] bottom-[5%]"><span className={`${isfinished == "circle" ? "circtext":(isfinished == "cross" ? "crstext" : "") }  `}>{isfinished.toUpperCase()}</span> Won The Game</h2>)}
       {isfinished =="draw" && (<h2 className="uu lo absolute text-[5vw] bottom-[5%]">It's a Draw</h2>)}
+      {isfinished  && (<button onClick={handlerestart} className='bg-yellow-300 absolute bottom-[2%] text-[20px] px-8 py-5 rounded-xl'>Restart</button>)}
   </div>
 )}
 

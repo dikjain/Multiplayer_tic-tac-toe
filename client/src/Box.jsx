@@ -43,6 +43,12 @@ function Box({playingas,setplayingas,id,socket,setgamestate,gamestate,checkwin,f
 
 
       const [icon,seticon] = useState(null)
+
+      useEffect(()=>{
+        socket?.on("restarting",()=>{
+          seticon(null)
+        })
+      },[])
       
 
       const clickonsquare = ()=>{
@@ -68,8 +74,6 @@ function Box({playingas,setplayingas,id,socket,setgamestate,gamestate,checkwin,f
 
         
       }
-        
-
       }
 
 
