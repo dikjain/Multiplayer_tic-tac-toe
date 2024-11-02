@@ -13,10 +13,21 @@ function App() {
     const [finishedarraystate,setfinishedarraystate] = useState([])
     const [playonline,setplayonline] = useState(false)
     const [socket,setsocket] = useState(null)
-    const [username,setusername] = useState("")
+    const [username,setusername] = useState("");
     const [opponent,setopponent] = useState(null)
     const [playingas,setplayingas] = useState(null)
+    const [circleWins, setCircleWins] = useState(0);
+    const [crossWins, setCrossWins] = useState(0);
+    const [draws, setDraws] = useState(0);
     let newsocket= undefined
+    
+    
+
+    
+
+
+
+
 
     const takeplayername = async()=>{
 
@@ -34,6 +45,8 @@ function App() {
       });
       return result
     }
+
+
      const letsplay = async()=>{
       const result =  await takeplayername();
       if(!result.isConfirmed) {
@@ -113,28 +126,40 @@ function App() {
       socket?.emit("handlerestart")
     }
 
+    useEffect(() => {
+      if (isfinished === "circle") {
+        setCircleWins(circleWins + 1);
+      } else if (isfinished === "cross") {
+        setCrossWins(crossWins + 1);
+      } else if (isfinished === "draw") {
+        setDraws(draws + 1);
+      }
+    }, [isfinished]);
+
+    const resetScoreboard = () => {
+      setCircleWins(0);
+      setCrossWins(0);
+      setDraws(0);
+    };
+
+
     
 
 
 
     const checkwin = () => {
-      // Check rows
       for (let i = 0; i < gamestate.length; i++) {
         if (gamestate[i][0] === gamestate[i][1] && gamestate[i][1] === gamestate[i][2] && (gamestate[i][0] === 'circle' || gamestate[i][0] === 'cross')) {
           setfinishedarraystate([i * 3, i * 3 + 1, i * 3 + 2]);
           return gamestate[i][0];
         }
       }
-    
-      // Check columns
       for (let i = 0; i < gamestate[0].length; i++) {
         if (gamestate[0][i] === gamestate[1][i] && gamestate[1][i] === gamestate[2][i] && (gamestate[0][i] === 'circle' || gamestate[0][i] === 'cross')) {
           setfinishedarraystate([i, i + 3, i + 6]);
           return gamestate[0][i];
         }
       }
-    
-      // Check diagonals
       if (gamestate[0][0] === gamestate[1][1] && gamestate[1][1] === gamestate[2][2] && (gamestate[0][0] === 'circle' || gamestate[0][0] === 'cross')) {
         setfinishedarraystate([0, 4, 8]);
         return gamestate[0][0];
@@ -144,7 +169,7 @@ function App() {
         return gamestate[0][2];
       }
     
-      // Check draw
+
       const isdraw = gamestate.flat().every((e) => e === 'circle' || e === 'cross');
       if (isdraw) {
         setisfinished('draw');
@@ -158,7 +183,10 @@ function App() {
   
 
 if(!playonline){
-  return <div onClick={letsplay} className='w-screen relative flex items-center justify-center text-white h-screen bg-[#020202]'><button className='bg-yellow-300 text-[5vw] px-8 py-5 rounded-xl'>Play Online</button></div>
+
+  return <div onClick={letsplay} className='w-screen lpbg relative flex items-center justify-center text-white h-screen bg-[#020202]'>
+  <button className='oopm text-[5vw] px-8 font-bold font-[poppins] py-5 rounded-xl'>Play Online</button>
+  </div>
 }
 if(playonline && !opponent){
   return <div className='w-screen relative flex items-center justify-center text-white h-screen text-[5vw] bg-[#020202]'>Waiting for a opponent....</div>
@@ -186,9 +214,22 @@ if(playonline && !opponent){
         setcurrentplayer={setcurrentplayer}
          />)))}
       </div>
+      <div className="scoreboard absolute bottom-[5%] right-[5%] text-[2vw] bg-gray-500 p-3 rounded-xl">
+        <h3>Scoreboard</h3>
+        <p>{username} Wins: {circleWins}</p>
+        <p>{opponent} Wins: {crossWins}</p>
+        <p>Draws: {draws}</p>
+        <button onClick={resetScoreboard} className='bg-gradient-to-r from-red-400 to-red-600 hover:from-red-500 hover:to-red-700 text-white font-bold py-1 px-3 rounded-full shadow-lg transform transition-transform duration-300 ease-in-out hover:scale-105'>
+          Reset Scoreboard
+        </button>
+      </div>
       {isfinished && isfinished !=="draw" && (<h2 className="uu lo absolute text-[5vw] bottom-[5%]"><span className={`${isfinished == "circle" ? "circtext":(isfinished == "cross" ? "crstext" : "") }  `}>{isfinished.toUpperCase()}</span> Won The Game</h2>)}
       {isfinished =="draw" && (<h2 className="uu lo absolute text-[5vw] bottom-[5%]">It's a Draw</h2>)}
-      {isfinished  && (<button onClick={handlerestart} className='bg-yellow-300 absolute bottom-[2%] text-[20px] px-8 py-5 rounded-xl'>Restart</button>)}
+      {isfinished  && (
+        <button onClick={handlerestart} className='bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition-transform duration-300 ease-in-out hover:scale-105 absolute bottom-[2%] text-[20px]'>
+          Restart
+        </button>
+      )}
   </div>
 )}
 
